@@ -72,11 +72,11 @@ app.use(function(err, req, res, next) {
 // });
 
 
-
 async function loadRoutes() {
   try {
     const routeFiles = glob.sync("routes/*/index.js").filter(file => file !== __filename);
 
+    console.log(routeFiles)
     for (const file of routeFiles) {
       const route = require(path.resolve(path.join(__dirname, file)));
       router.use('/', route.default || route);

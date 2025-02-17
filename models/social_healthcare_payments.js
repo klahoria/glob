@@ -2,7 +2,7 @@ const Sequelize = require('sequelize');
 module.exports = function(sequelize, DataTypes) {
   return sequelize.define('social_healthcare_payments', {
     shp_id: {
-      autoIncrement: true,
+      // autoIncrement: true,
       type: DataTypes.INTEGER.UNSIGNED,
       allowNull: false
     },

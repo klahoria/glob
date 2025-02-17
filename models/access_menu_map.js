@@ -26,8 +26,9 @@ module.exports = function(sequelize, DataTypes) {
       comment: "\\"
     },
     created_by: {
-      type: DataTypes.INTEGER,
-      allowNull: true
+      type: DataTypes.DATE,
+      allowNull: true,
+      defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP')
     },
     modified_by: {
       type: DataTypes.INTEGER,
@@ -41,7 +42,7 @@ module.exports = function(sequelize, DataTypes) {
   }, {
     sequelize,
     tableName: 'access_menu_map',
-    timestamps: true,
+    timestamps: false,
     indexes: [
       {
         name: "PRIMARY",

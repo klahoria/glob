@@ -9,9 +9,6 @@ async function loadRoutes() {
     try {
       const routeFiles = glob.sync("routes/**/").filter(file => file !== __filename);
 
-
-      console.log(routeFiles)
-  
       for (const file1 of routeFiles) {
         // console.log(file1,"file11");
         fs.readdirSync(file1).filter(file => {
