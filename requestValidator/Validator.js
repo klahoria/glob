@@ -1,14 +1,14 @@
-function validateRequestBody(schema) {
+function validateRequestBody(schema,toValidate='body') {
     return function (req, res, next) {
         try {
-            if (!req.body || Object.keys(req.body).length === 0) {
+            if (!req[toValidate] || Object.keys(req[toValidate]).length === 0) {
                 return res.status(400).json({
                     error: 1,
                     message: 'Request body is missing. Please provide the required data.'
                 });
             }
 
-            const { error, value } = schema.validate(req.body, { abortEarly: false });
+            const { error, value } = schema.validate(req[toValidate], { abortEarly: false });
             console.error(error)
 
             if (error) {
@@ -49,4 +49,7 @@ function validateRequestBody(schema) {
     };
 }
 
-module.exports = validateRequestBody;
+// module.exports = validateRequestBody;
+module.exports = {validateRequestBody, validateRequestParams: (schema)=>validateRequestBody(schema, 'params'),
+    validateRequestQuery: (schema)=>validateRequestBody(schema, 'query')
+};

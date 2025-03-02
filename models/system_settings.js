@@ -609,6 +609,11 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.STRING(200),
       allowNull: true,
       comment: "Doctor ids to change card-integration card in API integration module"
+    },
+    news_letter_setting: {
+      type: DataTypes.STRING(200),
+      allowNull: true,
+      comment: "market team ids for notification when customer send questions through newsletter\/community forum"
     }
   }, {
     sequelize,

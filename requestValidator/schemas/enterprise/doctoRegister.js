@@ -1,5 +1,5 @@
 const Joi = require('joi');
-const validateRequestBody = require('../../Validator');
+const {validateRequestBody} = require('../../Validator');
 
 const schema = Joi.object({
     doctor_email: Joi.string().email().required(),
@@ -58,5 +58,7 @@ const schema = Joi.object({
 
 // module.exports = schema;
 let doctorRegister = validateRequestBody(schema);
+
+doctorRegister.name = 'doctorRegister';
 
 module.exports = doctorRegister;

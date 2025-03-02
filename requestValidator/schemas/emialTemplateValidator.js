@@ -16,6 +16,8 @@ const schema = Joi.object({
 
 let emailTemplateValidator = validateRequestBody(schema);
 
+emailTemplateValidator.name = 'emailTemplateValidator';
+
 module.exports = emailTemplateValidator;
 
 // (req,res,next) => {}

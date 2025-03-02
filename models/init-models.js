@@ -102,6 +102,7 @@ var _cms_templates = require("./cms_templates");
 var _cms_templates_types = require("./cms_templates_types");
 var _collections_error = require("./collections_error");
 var _collections_notes = require("./collections_notes");
+var _community_forum = require("./community_forum");
 var _completed_contract_unpaids = require("./completed_contract_unpaids");
 var _connect_onboarding = require("./connect_onboarding");
 var _contact_type = require("./contact_type");
@@ -520,6 +521,7 @@ var _training_screens_completed = require("./training_screens_completed");
 var _training_statuses = require("./training_statuses");
 var _training_types = require("./training_types");
 var _transaction_fee_details = require("./transaction_fee_details");
+var _transaction_fee_errors = require("./transaction_fee_errors");
 var _transaction_fee_types = require("./transaction_fee_types");
 var _transfer_reversals = require("./transfer_reversals");
 var _treatment_categories = require("./treatment_categories");
@@ -656,6 +658,7 @@ function initModels(sequelize) {
   var cms_templates_types = _cms_templates_types(sequelize, DataTypes);
   var collections_error = _collections_error(sequelize, DataTypes);
   var collections_notes = _collections_notes(sequelize, DataTypes);
+  var community_forum = _community_forum(sequelize, DataTypes);
   var completed_contract_unpaids = _completed_contract_unpaids(sequelize, DataTypes);
   var connect_onboarding = _connect_onboarding(sequelize, DataTypes);
   var contact_type = _contact_type(sequelize, DataTypes);
@@ -1074,6 +1077,7 @@ function initModels(sequelize) {
   var training_statuses = _training_statuses(sequelize, DataTypes);
   var training_types = _training_types(sequelize, DataTypes);
   var transaction_fee_details = _transaction_fee_details(sequelize, DataTypes);
+  var transaction_fee_errors = _transaction_fee_errors(sequelize, DataTypes);
   var transaction_fee_types = _transaction_fee_types(sequelize, DataTypes);
   var transfer_reversals = _transfer_reversals(sequelize, DataTypes);
   var treatment_categories = _treatment_categories(sequelize, DataTypes);
@@ -1217,6 +1221,7 @@ function initModels(sequelize) {
     cms_templates_types,
     collections_error,
     collections_notes,
+    community_forum,
     completed_contract_unpaids,
     connect_onboarding,
     contact_type,
@@ -1635,6 +1640,7 @@ function initModels(sequelize) {
     training_statuses,
     training_types,
     transaction_fee_details,
+    transaction_fee_errors,
     transaction_fee_types,
     transfer_reversals,
     treatment_categories,

@@ -1,37 +1,28 @@
 const Sequelize = require('sequelize');
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('subscription_news_letter', {
+  return sequelize.define('transaction_fee_errors', {
     id: {
       autoIncrement: true,
       type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true
     },
-    email: {
-      type: DataTypes.STRING(255),
+    error: {
+      type: DataTypes.TEXT,
       allowNull: true
     },
-    question: {
-      type: DataTypes.STRING(255),
+    stack: {
+      type: DataTypes.TEXT,
       allowNull: true
     },
-    page_link: {
+    funcname: {
       type: DataTypes.STRING(255),
       allowNull: true
-    },
-    is_deleted: {
-      type: DataTypes.TINYINT,
-      allowNull: false,
-      defaultValue: 0
-    },
-    date_added: {
-      type: DataTypes.DATE,
-      allowNull: false
     }
   }, {
     sequelize,
-    tableName: 'subscription_news_letter',
-    timestamps: false,
+    tableName: 'transaction_fee_errors',
+    timestamps: true,
     indexes: [
       {
         name: "PRIMARY",

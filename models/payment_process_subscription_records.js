@@ -182,6 +182,16 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false,
       defaultValue: 0,
       comment: "0: No, 1: Yes"
+    },
+    transaction_fee_metrics_buss: {
+      type: DataTypes.JSON,
+      allowNull: true,
+      comment: "Transaction fee metrics for the charge"
+    },
+    transaction_fee_metrics: {
+      type: DataTypes.JSON,
+      allowNull: true,
+      comment: "Transaction fee metrics for the charge"
     }
   }, {
     sequelize,

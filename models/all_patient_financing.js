@@ -394,6 +394,11 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false,
       defaultValue: 1
     },
+    is_deleted: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0
+    },
     ez_plan_new: {
       type: DataTypes.TINYINT,
       allowNull: true,
@@ -408,8 +413,12 @@ module.exports = function(sequelize, DataTypes) {
     },
     transaction_fee_metrics_array: {
       type: DataTypes.JSON,
-      allowNull: true,
-      comment: "Transaction fee metrics for each payment source type"
+      allowNull: true
+    },
+    default_payment_source_type: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 3
     }
   }, {
     sequelize,

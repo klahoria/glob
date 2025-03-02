@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize');
-module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('doctor_register_otp', {
+module.exports = function (sequelize, DataTypes) {
+  const DoctorRegistrationOtp = sequelize.define('doctor_register_otp', {
     id: {
       autoIncrement: true,
       type: DataTypes.INTEGER,
@@ -47,4 +47,15 @@ module.exports = function(sequelize, DataTypes) {
       },
     ]
   });
+
+  DoctorRegistrationOtp.associate = function (models) {
+    DoctorRegistrationOtp.belongsTo(models.otp_type, {
+      foreignKey: 'otp_type',
+      targetKey: 'otp_type',
+      as: 'otpType'
+    })
+  }
+
+  return DoctorRegistrationOtp;
+
 };

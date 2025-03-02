@@ -200,6 +200,13 @@ module.exports = function(sequelize, DataTypes) {
         ]
       },
       {
+        name: "charge_id",
+        using: "BTREE",
+        fields: [
+          { name: "charge_id" },
+        ]
+      },
+      {
         name: "contract_id",
         using: "BTREE",
         fields: [
@@ -207,10 +214,32 @@ module.exports = function(sequelize, DataTypes) {
         ]
       },
       {
-        name: "charge_id",
+        name: "doctor_id",
         using: "BTREE",
         fields: [
-          { name: "charge_id" },
+          { name: "doctor_id" },
+        ]
+      },
+      {
+        name: "payment_type",
+        using: "BTREE",
+        fields: [
+          { name: "payment_type" },
+          { name: "source_id" },
+        ]
+      },
+      {
+        name: "date_added",
+        using: "BTREE",
+        fields: [
+          { name: "date_added" },
+        ]
+      },
+      {
+        name: "source_id",
+        using: "BTREE",
+        fields: [
+          { name: "source_id" },
         ]
       },
     ]
