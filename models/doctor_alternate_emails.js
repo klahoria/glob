@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize');
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('doctor_alternate_emails', {
+  const DoctorAlternateEmail =  sequelize.define('doctor_alternate_emails', {
     dae_id: {
       autoIncrement: true,
       type: DataTypes.INTEGER.UNSIGNED,
@@ -69,4 +69,16 @@ module.exports = function(sequelize, DataTypes) {
       },
     ]
   });
+
+  DoctorAlternateEmail.associate = function (models) {
+    // if (models.doctor_settings) { // ✅ Check if the model exists
+      DoctorAlternateEmail.belongsTo(models.doctor_profile, {
+        foreignKey: 'doctor_id',
+        as: 'doctorProfile' // Alias for the relationship
+      });
+    // }
+  };
+
+  return DoctorAlternateEmail;
+  
 };

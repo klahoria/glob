@@ -354,13 +354,16 @@ module.exports = function(sequelize, DataTypes) {
     },
     transaction_fee_metrics_array: {
       type: DataTypes.JSON,
-      allowNull: true,
-      comment: "Transaction fee metrics for each payment source type"
+      allowNull: true
     },
-    transaction_fee_metrics_array_buss: {
+    transaction_fee_metrics_buss: {
       type: DataTypes.JSON,
-      allowNull: true,
-      comment: "Transaction fee metrics for each payment source type for businesses"
+      allowNull: true
+    },
+    default_payment_source_type: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 3
     }
   }, {
     sequelize,

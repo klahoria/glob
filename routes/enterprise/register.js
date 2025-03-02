@@ -1,29 +1,13 @@
 const express = require("express");
 const router = express.Router();
-const CheckDoctorEmail = require('../../commonFunctions/doctor')
 const doctorRegister = require('../../requestValidator/schemas/enterprise/doctoRegister');
+const { DoctorRegisterController, CheckDoctorMobileController, sendRegistrationOTP } = require("../../controllers/enterprise/register");
+const { DoctorEmailParams, SendRegistrationOtp, DoctorMobileParams } = require('../../requestValidator/schemas/enterprise/index.js')
 
-
-
-router.post("/register_doctor_v2", doctorRegister, (req, res) => {
-  
-});
-
-
-router.get('/check_doctor_email', async (req,res)=>{
-
-    console.log('here')
-    let menus = await CheckDoctorEmail();
-    res.status(200).json(menus);
-    
-})
-
-router.post("/users", (req, res) => {
-  res.json({ message: "User created" });
-});
-
-router.post("/", (req, res) => {
-  res.json({ message: "User created" });
-});
+router.post("/register_doctor_v2", doctorRegister, (req, res) => { });
+router.get('/check_doctor_email', DoctorEmailParams, DoctorRegisterController);
+router.get('/check_doctor_mobile', DoctorMobileParams, CheckDoctorMobileController);
+router.get('/register_otp', SendRegistrationOtp, sendRegistrationOTP);
+router.get('/verify_register_otp', SendRegistrationOtp, sendRegistrationOTP);
 
 module.exports = router

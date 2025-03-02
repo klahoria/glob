@@ -309,15 +309,15 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.STRING(10),
       allowNull: true
     },
-    transaction_fee_metrics_array: {
+    transaction_fee_metrics_buss: {
       type: DataTypes.JSON,
       allowNull: true,
-      comment: "Transaction fee metrics for each payment source type"
+      comment: "Transaction fee metrics for the charge"
     },
-    transaction_fee_metrics_array_buss: {
+    transaction_fee_metrics: {
       type: DataTypes.JSON,
       allowNull: true,
-      comment: "Transaction fee metrics for each payment source type for businesses"
+      comment: "Transaction fee metrics for the charge"
     }
   }, {
     sequelize,

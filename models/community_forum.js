@@ -1,15 +1,11 @@
 const Sequelize = require('sequelize');
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('subscription_news_letter', {
+  return sequelize.define('community_forum', {
     id: {
       autoIncrement: true,
       type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true
-    },
-    email: {
-      type: DataTypes.STRING(255),
-      allowNull: true
     },
     question: {
       type: DataTypes.STRING(255),
@@ -20,17 +16,18 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: true
     },
     is_deleted: {
-      type: DataTypes.TINYINT,
+      type: DataTypes.INTEGER,
       allowNull: false,
       defaultValue: 0
     },
     date_added: {
       type: DataTypes.DATE,
-      allowNull: false
+      allowNull: false,
+      defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP')
     }
   }, {
     sequelize,
-    tableName: 'subscription_news_letter',
+    tableName: 'community_forum',
     timestamps: false,
     indexes: [
       {

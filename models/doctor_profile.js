@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize');
-module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('doctor_profile', {
+module.exports = function (sequelize, DataTypes) {
+  const DoctorProfile = sequelize.define('doctor_profile', {
     doctor_id: {
       autoIncrement: true,
       type: DataTypes.INTEGER.UNSIGNED,
@@ -23,7 +23,7 @@ module.exports = function(sequelize, DataTypes) {
       defaultValue: 0
     },
     title: {
-      type: DataTypes.ENUM('','Dr.','Mr.','Ms.','Mrs.','Miss.'),
+      type: DataTypes.ENUM('', 'Dr.', 'Mr.', 'Ms.', 'Mrs.', 'Miss.'),
       allowNull: true
     },
     doctor_first_name: {
@@ -112,12 +112,12 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: true
     },
     payout_fee_percent: {
-      type: DataTypes.DECIMAL(5,2),
+      type: DataTypes.DECIMAL(5, 2),
       allowNull: false,
       defaultValue: 0.50
     },
     inactive_fee_percent: {
-      type: DataTypes.DECIMAL(5,2),
+      type: DataTypes.DECIMAL(5, 2),
       allowNull: false,
       defaultValue: 5.00
     },
@@ -146,7 +146,7 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: true
     },
     stripe_balance: {
-      type: DataTypes.DECIMAL(11,2),
+      type: DataTypes.DECIMAL(11, 2),
       allowNull: true
     },
     stripe_account_id: {
@@ -186,7 +186,7 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: true
     },
     manager_title: {
-      type: DataTypes.ENUM('','Dr.','Mr.','Ms.','Mrs.','Miss.'),
+      type: DataTypes.ENUM('', 'Dr.', 'Mr.', 'Ms.', 'Mrs.', 'Miss.'),
       allowNull: false
     },
     manager_name: {
@@ -311,7 +311,7 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false
     },
     reports_hard_copy: {
-      type: DataTypes.ENUM('0','1'),
+      type: DataTypes.ENUM('0', '1'),
       allowNull: false,
       defaultValue: "0",
       comment: "If doctor need hard copy of reports."
@@ -578,6 +578,31 @@ module.exports = function(sequelize, DataTypes) {
           { name: "doctor_id" },
         ]
       },
+      {
+        name: "doctor_id",
+        using: "BTREE",
+        fields: [
+          { name: "doctor_id" },
+        ]
+      },
     ]
   });
+
+  DoctorProfile.associate = function (models) {
+    
+      DoctorProfile.hasOne(models.doctor_settings, {
+        foreignKey: 'doctor_id',
+        as: 'settings' // Alias for the relationship
+      });
+
+      DoctorProfile.hasMany(models.doctor_alternate_emails, {
+        foreignKey: 'doctor_id',
+        as: 'doctorAlternateEmail' // Alias for the relationship
+      });
+      
+  };
+  
+
+  return DoctorProfile;
+
 };

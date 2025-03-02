@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize');
-module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('otp_type', {
+module.exports = function (sequelize, DataTypes) {
+  const OTPTYPE = sequelize.define('otp_type', {
     otp_type: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -31,4 +31,15 @@ module.exports = function(sequelize, DataTypes) {
       },
     ]
   });
+
+  OTPTYPE.associate = function (models) {
+    OTPTYPE.hasMany(models.doctor_register_otp, {
+      foreignKey: 'otp_type',
+      sourceKey: 'otp_type',
+      as: 'doctor_otp'
+    })
+  }
+
+  return OTPTYPE;
+
 };

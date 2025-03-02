@@ -24,8 +24,19 @@ module.exports = function(sequelize, DataTypes) {
     },
     token: {
       type: DataTypes.STRING(100),
-      allowNull: true,
-      comment: "IF type = 0 AND patient_id = 0 AND token is NOT NULL then token is contract_patient_token (split_app_request table), IF type = 0 AND patient_id != 0 AND token is NOT NULL then token is payment_link_token (payment_process_record table)"
+      allowNull: true
+    },
+    token_type: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0,
+      comment: "0: Default, 1: Contract (split_app_request), 2: Payment Process (payment_process_record)"
+    },
+    doctor_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0,
+      comment: "Doctor ID of the business that sends the link\/token to the customer"
     },
     clarity_id: {
       type: DataTypes.STRING(100),

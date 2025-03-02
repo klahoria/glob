@@ -829,6 +829,16 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false,
       defaultValue: 0
     },
+    recuvery_slot: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0
+    },
+    moved_to_recuvery: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0
+    },
     recuvery_qr_code: {
       type: DataTypes.TEXT,
       allowNull: true
@@ -839,8 +849,12 @@ module.exports = function(sequelize, DataTypes) {
     },
     transaction_fee_metrics_array: {
       type: DataTypes.JSON,
-      allowNull: true,
-      comment: "Transaction fee metrics for each payment source type"
+      allowNull: true
+    },
+    default_payment_source_type: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 3
     }
   }, {
     sequelize,

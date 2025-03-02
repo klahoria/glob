@@ -1,10 +1,11 @@
 const Sequelize = require('sequelize');
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('doctor_settings', {
+  const DoctorSettings = sequelize.define('doctor_settings', {
     doctor_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      defaultValue: 0
+      defaultValue: 0,
+      primaryKey: 1
     },
     recurring_extra_amount: {
       type: DataTypes.DECIMAL(5,2),
@@ -1424,4 +1425,12 @@ module.exports = function(sequelize, DataTypes) {
       },
     ]
   });
+
+  DoctorSettings.associate = (models) => {
+    DoctorSettings.belongsTo(models.doctor_profile, { foreignKey: 'doctor_id', as: 'profile' });
+  };
+  
+
+  return DoctorSettings;
+  
 };

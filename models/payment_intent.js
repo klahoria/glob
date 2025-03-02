@@ -199,7 +199,7 @@ module.exports = function(sequelize, DataTypes) {
     last_updated: {
       type: DataTypes.DATE,
       allowNull: false,
-      defaultValue: "0000-00-00 00:00:00"
+      defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP')
     }
   }, {
     sequelize,
