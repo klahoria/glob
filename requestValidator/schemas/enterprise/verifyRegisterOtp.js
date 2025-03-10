@@ -21,5 +21,5 @@ let verifyRegisterOtp = validateRequestBody(schema);
 
 verifyRegisterOtp.name = 'verifyRegisterOtp';
 
-module.exports = `verifyRegisterOtp`;
+module.exports = verifyRegisterOtp;
 
