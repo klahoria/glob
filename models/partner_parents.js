@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize');
-module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('partner_parents', {
+module.exports = function (sequelize, DataTypes) {
+  const PartnerParents = sequelize.define('partner_parents', {
     para_id: {
       autoIncrement: true,
       type: DataTypes.INTEGER,
@@ -88,4 +88,13 @@ module.exports = function(sequelize, DataTypes) {
       },
     ]
   });
+
+  PartnerParents.associate = (models) => {
+    PartnerParents.belongsTo(models.partner_parents, {
+      foreignKey: 'partner_id',
+      as: 'partnerParents'
+    })
+  }
+
+  return PartnerParents;
 };

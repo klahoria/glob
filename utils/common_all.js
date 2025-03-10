@@ -32,4 +32,10 @@ async function VerifyUserOTP(req) {
 
 // VerifyUserOTP({ body: { id: 2396 } })
 
+function GetPersonReferredBy(referral_code, ){
+    if(!referral_code) return;
+
+    let personDetails = 
+}
+
 module.exports = { generateRandomNumber, VerifyUserOTP }

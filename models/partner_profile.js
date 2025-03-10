@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize');
-module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('partner_profile', {
+module.exports = function (sequelize, DataTypes) {
+  const PartnerProfile = sequelize.define('partner_profile', {
     partner_id: {
       autoIncrement: true,
       type: DataTypes.INTEGER.UNSIGNED,
@@ -23,7 +23,7 @@ module.exports = function(sequelize, DataTypes) {
       defaultValue: 0
     },
     title: {
-      type: DataTypes.ENUM('','Dr.','Mr.','Ms.','Mrs.','Miss.'),
+      type: DataTypes.ENUM('', 'Dr.', 'Mr.', 'Ms.', 'Mrs.', 'Miss.'),
       allowNull: false
     },
     partner_name: {
@@ -94,7 +94,7 @@ module.exports = function(sequelize, DataTypes) {
       comment: "0 for not seen 1 for seen"
     },
     stripe_balance: {
-      type: DataTypes.DECIMAL(11,2),
+      type: DataTypes.DECIMAL(11, 2),
       allowNull: true
     },
     stripe_account_id: {
@@ -115,7 +115,7 @@ module.exports = function(sequelize, DataTypes) {
       defaultValue: 1
     },
     new_partner_percentage: {
-      type: DataTypes.DECIMAL(9,2),
+      type: DataTypes.DECIMAL(9, 2),
       allowNull: false,
       defaultValue: 0.00
     },
@@ -164,17 +164,17 @@ module.exports = function(sequelize, DataTypes) {
       comment: "1- partner can set partner share from doctor share. 0- cannot"
     },
     default_partner_share: {
-      type: DataTypes.DECIMAL(9,2),
+      type: DataTypes.DECIMAL(9, 2),
       allowNull: false,
       defaultValue: 5.00
     },
     minimum_share_from_doctor: {
-      type: DataTypes.DECIMAL(9,2),
+      type: DataTypes.DECIMAL(9, 2),
       allowNull: false,
       defaultValue: 0.00
     },
     maximum_share_from_doctor: {
-      type: DataTypes.DECIMAL(9,2),
+      type: DataTypes.DECIMAL(9, 2),
       allowNull: false,
       defaultValue: 10.00
     },
@@ -332,4 +332,13 @@ module.exports = function(sequelize, DataTypes) {
       },
     ]
   });
+
+  PartnerProfile.associate = (models) => {
+    PartnerProfile.hasOne(models.partner_parents, {
+      foreignKey: 'partner_id',
+      as: 'ParentProfile' // Alias for the relationship
+    });
+  }
+
+  return PartnerProfile;
 };

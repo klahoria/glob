@@ -1,10 +1,11 @@
-const { CheckDoctorMobile, CheckDoctorEmail } = require("../../commonFunctions/doctor");
+const { CheckDoctorMobile, CheckDoctorEmail, chekcDoctorEmailExists, chekcAgentEmailExists } = require("../../commonFunctions/doctor");
 const { generateRandomNumber, VerifyUserOTP } = require("../../utils/common_all");
 const { templateEmailer } = require("../../utils/mailer");
 const { doctor_register_otp } = require('../../models');
 const { sendSMS } = require("../../utils/RingCenteral");
 const logger = require("../../utils/ErrorLoggers");
 const { Op, fn } = require("sequelize");
+const { isLeadExist } = require("../../utils/common_leads");
 
 async function DoctorRegisterController(req, res) {
 
@@ -163,4 +164,62 @@ async function VerifyRegisterOtp(req, res) {
 
 }
 
-module.exports = { DoctorRegisterController, CheckDoctorMobileController, sendRegistrationOTP, VerifyRegisterOtp }
+
+async function RegisterBusinessV2(req, res) {
+    try {
+        let { doctor_email, doctor_mobile } = req.body;
+        // {
+        //     "device_token": "Website",
+        //     "device_type": 0,
+        //     "app_type": 2,
+        //     "app_version": 130,
+        //     "device_id": "25010064645373613300053736510801920241741511839723",
+        //     "doctor_first_name": "test",
+        //     "doctor_last_name": "test",
+        //     "doctor_email": "kk13hai@gmail.com",
+        //     "doctor_mobile": "+1-0000000125",
+        //     "doctor_password": "sookie",
+        //     "otp": "543641",
+        //     "practice_name": "test",
+        //     "ind_id": "10186",
+        //     "sub_ind_id": "1188",
+        //     "sub_ind_name": "",
+        //     "ind_name": null,
+        //     "TnC": true,
+        //     "referral_code": 0,
+        //     "captcha": "11982",
+        //     "language_preferred": "",
+        //     "signup_type": "customer"
+        // }
+
+        let checkDoctor = await chekcDoctorEmailExists(doctor_email);
+        let checkAgent = await chekcAgentEmailExists(doctor_email);
+
+        if (checkDoctor || checkAgent) throw new Error("Email/Phone already registered")
+
+        let doctorLeads = await isLeadExist({
+            doctor_email, doctor_mobile
+        })
+
+        if (doctorLeads.length) {
+            req.body.lead_id = doctorLeads[0].lead_id;
+        }
+
+        if(referral_code) {
+           let personReferred = await GetPersonReferredBy(referral_code, 0);
+        }
+
+
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+
+// RegisterBusinessV2({
+//     body: {
+//         doctor_email: 'lalit.kumar+1jan@bridgingtech.com'
+//     }
+// })
+
+module.exports = { DoctorRegisterController, CheckDoctorMobileController, sendRegistrationOTP, VerifyRegisterOtp, RegisterBusinessV2 }
