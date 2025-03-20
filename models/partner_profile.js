@@ -334,7 +334,7 @@ module.exports = function (sequelize, DataTypes) {
   });
 
   PartnerProfile.associate = (models) => {
-    PartnerProfile.hasOne(models.partner_parents, {
+    PartnerProfile.hasMany(models.partner_parents, {
       foreignKey: 'partner_id',
       as: 'ParentProfile' // Alias for the relationship
     });
