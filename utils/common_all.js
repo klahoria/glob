@@ -64,6 +64,4 @@ async function referredByPartner(referral_code, own_partner_id) {
     }
 }
 
-// referredByPartner('TEKS723', 0);
-
 module.exports = { generateRandomNumber, VerifyUserOTP, referredByPartner }
