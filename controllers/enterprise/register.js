@@ -224,17 +224,17 @@ referredByPartner('TEKS723', 0).then((data) => {
     console.log(JSON.parse(data))
 })
 
-RegisterBusinessV2({
-    body: {
-        doctor_email: 'lalit.kumar+' + (Math.random() * 99999) + 'jan@bridgingtech.com',
-        doctor_speciality: 1,
-        ind_id: 1,
-        sub_ind_id: 1,
-        doctor_first_name: 'test',
-        doctor_last_name: 'test',
-        manager_title: ''
-    }
-})
+// RegisterBusinessV2({
+//     body: {
+//         doctor_email: 'lalit.kumar+' + parseInt(Math.random() * 99999) + 'jan@bridgingtech.com',
+//         doctor_speciality: 1,
+//         ind_id: 1,
+//         sub_ind_id: 1,
+//         doctor_first_name: 'test',
+//         doctor_last_name: 'test',
+//         manager_title: ''
+//     }
+// })
 
 
 async function getIndustryById(ind_id) {
@@ -307,11 +307,12 @@ async function processDoctorSpeciality(req) {
 
 async function createDoctorProfile(req, tracking_number) {
     return new Promise((resolve) => {
-        const salt = crypto.randomBytes(16);
+        const salt = crypto.randomBytes(16).toString('hex');
         let password = "sadfafsfjkadsfnskj34985839573u49843jtiuref";
         let doctorData;
-        crypto.pbkdf2(password, salt, 10, 32, 'sha256', async (err, hashedPassword) => {
-            if (err) return console.log(err)
+        crypto.pbkdf2(password, salt, 10, 10, 'sha256', async (err, hashedPassword) => {
+            if (err) return console.log(err);
+            console.log(req.body.device_type,salt.toString('hex'),';;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;')
             doctorData = await doctor_profile.create({
                 practice_address: req.body.practice_address,
                 city_id: req.body.city_id,
@@ -324,12 +325,13 @@ async function createDoctorProfile(req, tracking_number) {
                 doctor_first_name: req.body.doctor_first_name,
                 doctor_last_name: req.body.doctor_last_name,
                 doctor_password: hashedPassword.toString('hex'),
+                password_salt: salt,
                 doctor_image: req.doctor_image,
                 referral_code: req.referral_code,
                 doctor_speciality: req.body.doctor_speciality,
                 message_id: parseInt(req.body.message_id),
                 reason: req.body.reason,
-                app_used: parseInt(req.body.device_type),
+                app_used: ('test' || req.body.device_type),
                 is_guaranteed: 1,
                 can_finance: 1,
                 date_registered: new Date(),
@@ -399,3 +401,37 @@ async function processDoctorSignup(body, tracking_number, req, res) {
 
 
 module.exports = { DoctorRegisterController, CheckDoctorMobileController, sendRegistrationOTP, VerifyRegisterOtp, RegisterBusinessV2, processDoctorSignup }
+
+async function verifyDoctorPassword(email, inputPassword) {
+    try {
+        // Fetch the doctor's record from the database
+        const doctor = await doctor_profile.findOne({ where: { doctor_email: email } });
+
+        // Check if doctor exists
+        if (!doctor) {
+            console.log("Doctor not found!");
+            return false;
+        }
+
+        // Ensure salt is available
+        if (!doctor.password_salt) {
+            console.log("Salt is missing. Cannot verify password.");
+            return false;
+        } 
+
+        console.log(doctor.password_salt)
+
+        // Hash the input password using the stored salt
+        const hashedInputPassword = crypto.pbkdf2Sync(inputPassword, doctor.password_salt, 10, 10, 'sha256').toString('hex');
+
+        // Compare the hashed input password with the stored hashed password
+        return doctor.doctor_password === hashedInputPassword;
+    } catch (error) {
+        console.error("Error verifying password:", error);
+        return false;
+    }
+}
+
+verifyDoctorPassword("lalit.kumar+1jan@bridgingtech.com",'sadfafsfjkadsfnskj34985839573u49843jtiuref').then((data)=>{
+    console.log(data,";;;;;;;;;;;;;;;;;;")
+})

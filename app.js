@@ -73,6 +73,7 @@ app.use(function(err, req, res, next) {
 //   }
 // });
 
+console.log(process.env.gmailSMTPtoken,"process.env.gmailSMTPtoken")
 
 async function loadRoutes() {
   try {
