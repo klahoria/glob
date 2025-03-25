@@ -1,12 +1,15 @@
 const { CheckDoctorMobile, CheckDoctorEmail, chekcDoctorEmailExists, chekcAgentEmailExists } = require("../../commonFunctions/doctor");
 const { generateRandomNumber, VerifyUserOTP, referredByPartner } = require("../../utils/common_all");
 const { templateEmailer } = require("../../utils/mailer");
-const { doctor_register_otp, doctor_speciality, industries, system_settings } = require('../../models');
+const { doctor_register_otp, doctor_speciality, industries, system_settings, doctor_profile, doctor_referrals } = require('../../models');
 const { sendSMS } = require("../../utils/RingCenteral");
 const logger = require("../../utils/ErrorLoggers");
 const { Op, fn } = require("sequelize");
 const { isLeadExist } = require("../../utils/common_leads");
+const crypto = require('crypto');
+
 const getUinqueReferralCode = require("../../utils/ReferralGenerator");
+const { fetchDoctorLoginData } = require("./doctorController");
 
 async function DoctorRegisterController(req, res) {
 
@@ -169,30 +172,6 @@ async function RegisterBusinessV2(req, res) {
 
         let userSpeciality = req.body.doctor_speciality;
 
-        // {
-        //     "device_token": "Website",
-        //     "device_type": 0,
-        //     "app_type": 2,
-        //     "app_version": 130,
-        //     "device_id": "25010064645373613300053736510801920241741511839723",
-        //     "doctor_first_name": "test",
-        //     "doctor_last_name": "test",
-        //     "doctor_email": "kk13hai@gmail.com",
-        //     "doctor_mobile": "+1-0000000125",
-        //     "doctor_password": "sookie",
-        //     "otp": "543641",
-        //     "practice_name": "test",
-        //     "ind_id": "10186",
-        //     "sub_ind_id": "1188",
-        //     "sub_ind_name": "",
-        //     "ind_name": null,
-        //     "TnC": true,
-        //     "referral_code": 0,
-        //     "captcha": "11982",
-        //     "language_preferred": "",
-        //     "signup_type": "customer"
-        // }
-
         let checkDoctor = await chekcDoctorEmailExists(doctor_email);
         let checkAgent = await chekcAgentEmailExists(doctor_email);
 
@@ -208,24 +187,33 @@ async function RegisterBusinessV2(req, res) {
             req.body.lead_id = doctorLeads[0].lead_id;
         }
 
+        req.body.referral_code = referral_code;
+
         if (referral_code) {
             let personReferred = await referredByPartner(referral_code, 0);
             if (personReferred.length) {
                 req.body.referred_partner_id = personReferred[0].partner_id;
+            } else {
+                req.body.referred_partner_id = null;
             }
         }
 
         let doctorSpeciality;
         if (userSpeciality) {
-            doctorSpeciality = await processDoctorSpeciality(req)
+            doctorSpeciality = await processDoctorSpeciality(req);
+            if (doctorSpeciality) {
+                req.body.doctorSpeciality = doctorSpeciality;
+            }
         }
 
-        let systemSettings = await system_settings.findOne({
+        req.systemSettings = await system_settings.findOne({
             where: {
                 type: 1
             },
             raw: true
         })
+
+        processDoctorSignup(req.body, "processDoctorSignup", req, res)
 
     } catch (error) {
         console.log(error);
@@ -238,10 +226,13 @@ referredByPartner('TEKS723', 0).then((data) => {
 
 RegisterBusinessV2({
     body: {
-        doctor_email: 'lalit.kumar+3jan@bridgingtech.com',
+        doctor_email: 'lalit.kumar+' + (Math.random() * 99999) + 'jan@bridgingtech.com',
         doctor_speciality: 1,
         ind_id: 1,
-        sub_ind_id: 1
+        sub_ind_id: 1,
+        doctor_first_name: 'test',
+        doctor_last_name: 'test',
+        manager_title: ''
     }
 })
 
@@ -314,46 +305,40 @@ async function processDoctorSpeciality(req) {
     }
 }
 
-const common_doctor = require('common_doctor');
-const mailer = require('mailer');
-const doctor_login_function = require('doctor_login_function');
+async function createDoctorProfile(req, tracking_number) {
+    return new Promise((resolve) => {
+        const salt = crypto.randomBytes(16);
+        let password = "sadfafsfjkadsfnskj34985839573u49843jtiuref";
+        let doctorData;
+        crypto.pbkdf2(password, salt, 10, 32, 'sha256', async (err, hashedPassword) => {
+            if (err) return console.log(err)
+            doctorData = await doctor_profile.create({
+                practice_address: req.body.practice_address,
+                city_id: req.body.city_id,
+                lead_id: req.body.lead_id,
+                title: req.body.title,
+                doctor_email: req.body.doctor_email,
+                admin_id: process.env.main_admin,
+                doctor_mobile: req.body.doctor_mobile,
+                manager_title: '',
+                doctor_first_name: req.body.doctor_first_name,
+                doctor_last_name: req.body.doctor_last_name,
+                doctor_password: hashedPassword.toString('hex'),
+                doctor_image: req.doctor_image,
+                referral_code: req.referral_code,
+                doctor_speciality: req.body.doctor_speciality,
+                message_id: parseInt(req.body.message_id),
+                reason: req.body.reason,
+                app_used: parseInt(req.body.device_type),
+                is_guaranteed: 1,
+                can_finance: 1,
+                date_registered: new Date(),
+                panel: (req && req.module_name === 'doctor' && req.body.device_type != 3) ? 1 : (req && req.module_name === 'enterprise' ? 1 : 0),
+            });
+            resolve(doctorData);
+        });
 
-async function handleError(error, tracking_number, res) {
-    const errorCodeMap = {
-        "Please enter valid Industry": 560,
-        "Please enter valid Sub Industry": 561
-    };
-    if (errorCodeMap[error]) {
-        return sendResponse.sendErrorFlagResponseWithData(
-            errorCodeMap[error], tracking_number[5] + "U", error, { override_text: error }, res
-        );
-    }
-    return sendResponse.sendErrorFlagResponse(3, tracking_number[5] + "V", error, res);
-}
-
-async function createDoctorProfile(body, results, tracking_number) {
-    return await doctor_profile.create({
-        practice_address: req.body.practice_address,
-        city_id: req.body.city_id,
-        lead_id: req.body.lead_id,
-        title: req.body.title,
-        doctor_email: req.body.doctor_email,
-        admin_id: genVarSettings.main_admin,
-        doctor_mobile: req.body.doctor_mobile,
-        doctor_first_name: req.body.doctor_first_name,
-        doctor_last_name: req.body.doctor_last_name,
-        doctor_password: common_doctor.md5Function(req.body.doctor_password),
-        doctor_image: results[0],
-        referral_code: results[2],
-        doctor_speciality: req.body.doctor_speciality,
-        message_id: parseInt(req.body.message_id),
-        reason: req.body.reason,
-        app_used: parseInt(req.body.device_type),
-        is_guaranteed: 1,
-        can_finance: 1,
-        date_registered: new Date(),
-        panel: (req && req.module_name === 'doctor' && req.body.device_type != 3) ? 1 : (req && req.module_name === 'enterprise' ? 1 : 0),
-    });
+    })
 }
 
 async function updateLeadDoctorId(lead_id, doctor_id) {
@@ -364,31 +349,32 @@ async function updateLeadDoctorId(lead_id, doctor_id) {
 
 async function sendDoctorRegistrationEmail(req, results, req) {
     let doctor_data = {
-        to_email: genVarSettings.doctor_password_email,
+        to_email: req.body.doctor_email,
         doctor_name: `${req.body.title} ${req.body.doctor_first_name} ${req.body.doctor_last_name}`,
         doctor_email: req.body.doctor_email,
         doctor_number: req.body.doctor_mobile,
-        ind_id: results?.[4]?.ind?.ind_id || 0,
-        ind_name: results?.[4]?.ind?.ind_name || "",
-        doctor_speciality: results?.[3]?.speciality_name || results?.[4]?.sub_ind?.speciality_name || "",
+        ind_id: req?.ind?.ind_id || 0,
+        ind_name: req?.ind?.ind_name || "",
+        doctor_speciality: req?.speciality_name || req?.sub_ind?.speciality_name || "",
         email_subject: "Doctor Registered Successfully",
-        bcc_email: genVarSettings.doctor_register_emails,
+        bcc_email: process.env.doctor_register_emails,
         date_registered: new Date(),
-        lang: req.headers['x-lan-code'] || 'en'
+        lang: (req.hraders ? req.hraders['x-lan-code'] : '') || 'en'
     };
 
     if (!(req?.body?.skip_email)) {
-        await mailer.templateEmailer(1, "DOCTOR_REGISTRATION", doctor_data);
+        await templateEmailer(1, "DOCTOR_REGISTRATION", doctor_data);
     }
 }
 
-async function createDoctorReferrals(doctor_id, results, body) {
-    if (results[1] != 0) {
-        await DoctorReferrals.create({
+async function createDoctorReferrals(doctor_id, req, body) {
+    console.log(req.body)
+    if (req.referred_partner_id != 0) {
+        await doctor_referrals.create({
             doctor_id,
-            partner_id: results[1],
-            referral_code: results[2],
-            partner_referral_code: req.body.referral_code || null,
+            partner_id: req.body.referred_partner_id,
+            referral_code: req.body.referral_code,
+            partner_referral_code: req.body.referred_partner_id || null,
             referred_at: new Date()
         });
     }
@@ -396,33 +382,20 @@ async function createDoctorReferrals(doctor_id, results, body) {
 
 async function processDoctorSignup(body, tracking_number, req, res) {
     try {
-        const doctorProfile = await createDoctorProfile(body, results, tracking_number);
-        await updateLeadDoctorId(req.body.lead_id, doctorProfile.id);
-        await sendDoctorRegistrationEmail(body, doctorProfile.id, results, req);
-        await createDoctorReferrals(doctorProfile.id, results, body);
+        const doctorProfile = await createDoctorProfile(req, tracking_number);
+        console.log(doctorProfile.id, doctorProfile.doctor_id, ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;")
+        await updateLeadDoctorId(req.body.lead_id, doctorProfile.doctor_id);
+        await sendDoctorRegistrationEmail(req, doctorProfile.doctor_id, req);
+        await createDoctorReferrals(doctorProfile.doctor_id, req, body);
 
         // subscription.startFreePlanSubscription({ doctor_id: doctorProfile.id });
-        doctor_login_function.fetchDoctorLoginData(req, body, tracking_number[11], 101, res);
+        fetchDoctorLoginData(req, body, tracking_number[11], 101, res);
 
     } catch (error) {
-        await handleError(error, tracking_number, res);
+        // await handleError(error, tracking_number, res);
+        console.log(error)
     }
 }
 
-module.exports = { processDoctorSignup };
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-module.exports = { DoctorRegisterController, CheckDoctorMobileController, sendRegistrationOTP, VerifyRegisterOtp, RegisterBusinessV2 }
+module.exports = { DoctorRegisterController, CheckDoctorMobileController, sendRegistrationOTP, VerifyRegisterOtp, RegisterBusinessV2, processDoctorSignup }

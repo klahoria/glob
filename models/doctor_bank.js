@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize');
-module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('doctor_bank', {
+module.exports = function (sequelize, DataTypes) {
+  const DoctorBank = sequelize.define('doctor_bank', {
     bank_id: {
       autoIncrement: true,
       type: DataTypes.INTEGER.UNSIGNED,
@@ -66,4 +66,13 @@ module.exports = function(sequelize, DataTypes) {
       },
     ]
   });
+
+  DoctorBank.associate = (models) => {
+    DoctorBank.belongsTo(models.doctor_profile, {
+      foreignKey: 'doctor_id',
+      as: 'doctor_bank'
+    });
+  };
+
+  return DoctorBank;
 };

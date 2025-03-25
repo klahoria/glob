@@ -589,19 +589,23 @@ module.exports = function (sequelize, DataTypes) {
   });
 
   DoctorProfile.associate = function (models) {
-    
-      DoctorProfile.hasOne(models.doctor_settings, {
-        foreignKey: 'doctor_id',
-        as: 'settings' // Alias for the relationship
-      });
 
-      DoctorProfile.hasMany(models.doctor_alternate_emails, {
-        foreignKey: 'doctor_id',
-        as: 'doctorAlternateEmail' // Alias for the relationship
-      });
-      
+    DoctorProfile.hasOne(models.doctor_settings, {
+      foreignKey: 'doctor_id',
+      as: 'settings' // Alias for the relationship
+    });
+
+    DoctorProfile.hasMany(models.doctor_alternate_emails, {
+      foreignKey: 'doctor_id',
+      as: 'doctorAlternateEmail' // Alias for the relationship
+    });
+
+    DoctorProfile.hasOne(models.doctor_bank, { foreignKey: 'doctor_id', as: 'doctor_bank' });
+    DoctorProfile.hasOne(models.doctor_verification, { foreignKey: 'doctor_id', as: 'doctor_verification' });
+
+
   };
-  
+
 
   return DoctorProfile;
 

@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize');
-module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('doctor_verification', {
+module.exports = function (sequelize, DataTypes) {
+  const DoctorVerification = sequelize.define('doctor_verification', {
     doctor_id: {
       type: DataTypes.INTEGER.UNSIGNED,
       allowNull: false
@@ -72,4 +72,13 @@ module.exports = function(sequelize, DataTypes) {
       },
     ]
   });
+
+  DoctorVerification.associate = (models) => {
+    DoctorVerification.belongsTo(models.doctor_profile, {
+      foreignKey: 'doctor_id',
+      as: 'doctor_verification'
+    });
+  };
+
+  return DoctorVerification;
 };
