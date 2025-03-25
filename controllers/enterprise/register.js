@@ -220,23 +220,6 @@ async function RegisterBusinessV2(req, res) {
     }
 }
 
-referredByPartner('TEKS723', 0).then((data) => {
-    console.log(JSON.parse(data))
-})
-
-// RegisterBusinessV2({
-//     body: {
-//         doctor_email: 'lalit.kumar+' + parseInt(Math.random() * 99999) + 'jan@bridgingtech.com',
-//         doctor_speciality: 1,
-//         ind_id: 1,
-//         sub_ind_id: 1,
-//         doctor_first_name: 'test',
-//         doctor_last_name: 'test',
-//         manager_title: ''
-//     }
-// })
-
-
 async function getIndustryById(ind_id) {
     return await industries.findOne({ where: { ind_id }, raw: true });
 }
@@ -431,7 +414,3 @@ async function verifyDoctorPassword(email, inputPassword) {
         return false;
     }
 }
-
-verifyDoctorPassword("lalit.kumar+1jan@bridgingtech.com",'sadfafsfjkadsfnskj34985839573u49843jtiuref').then((data)=>{
-    console.log(data,";;;;;;;;;;;;;;;;;;")
-})

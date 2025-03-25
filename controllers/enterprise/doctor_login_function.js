@@ -89,7 +89,7 @@ function getAllAssociations() {
             include: [{ model: industries }]
         },
         {
-            model: City,
+            model: cities_extended,
             include: [
                 { model: states, include: [{ model: countries }] }
             ]
@@ -113,7 +113,7 @@ function getAllAssociations() {
         {
             model: cities_extended,
             as: 'DoctorCity',
-            include: [{ model: State, as: 'DoctorState' }]
+            include: [{ model: states, as: 'DoctorState' }]
         },
         {
             model: doctor_alternate_contact,
